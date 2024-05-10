@@ -1,17 +1,17 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "Algorithms.hpp"
 #include "Graph.hpp"
-#include <vector> // for std::vector
-#include <string> // for std::string
-#include <queue> // for std::queue
-#include <limits>
-#include <functional>
 #include <algorithm> // for std::reverse
-#include <stdexcept> // for std::out_of_range
-#include <sstream> // for std::ostringstream
+#include <functional>
 #include <iostream> // for std::cout
+#include <limits>
+#include <queue> // for std::queue
+#include <sstream> // for std::ostringstream
 #include <stack>
+#include <stdexcept> // for std::out_of_range
+#include <string> // for std::string
 #include <unordered_set>
+#include <vector> // for std::vector
 
 namespace ariel {
 
@@ -41,7 +41,7 @@ namespace ariel {
         }
     }
     //return true if its scc else false.
-    bool Algorithms::isConnected(const Graph& g) {
+    auto Algorithms::isConnected(const Graph& g) -> bool {
         const auto& adj = g.getAdjMatrix(); // Get the adjacency matrix from the graph
         std::size_t numVertices = adj.size();
 
@@ -81,7 +81,7 @@ namespace ariel {
 
         return true; // All vertices were visited in both forward and backward reachability
     }
-    std::string Algorithms::shortestPath(const Graph& g, int start, int end) {
+    auto Algorithms::shortestPath(const Graph& g, int start, int end) -> std::string {
         const auto& adj = g.getAdjMatrix(); // Get adjacency matrix
         auto numVertices = adj.size(); // Get the number of vertices
 
@@ -150,7 +150,7 @@ namespace ariel {
     }
 
     //DFS-based cycle detection for undirected and directed graphs
-    bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) {
+    auto isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) -> bool {
         if (recStack[node] && (!isUndirected || node != parent)) { // Check recursion stack for cycle
             // Find the cycle path
             auto it = std::find(path.begin(), path.end(), node);
@@ -186,7 +186,7 @@ namespace ariel {
         return false; // No cycle detected
     }
 
-    std::string Algorithms::isContainsCycle(const Graph& g) {
+    auto Algorithms::isContainsCycle(const Graph& g) -> std::string {
         const auto& adj = g.getAdjMatrix();
         // checks if there is a negative cycle use the negativeCycle function
         if(negativeCycle(adj)!= "Graph does not contain a negative cycle"){
@@ -209,7 +209,7 @@ namespace ariel {
         return "0"; // No cycles found
     }
     
-    std::string Algorithms::isBipartite(const Graph& g) {
+    auto Algorithms::isBipartite(const Graph& g) -> std::string {
         const auto& adj = g.getAdjMatrix();
         IndexType numVertices = adj.size();
 
@@ -264,7 +264,7 @@ namespace ariel {
         return result;
     }
 
-    std::string Algorithms::negativeCycle(const Graph& g) {
+    auto Algorithms::negativeCycle(const Graph& g) -> std::string {
         const auto& adj = g.getAdjMatrix();
             size_t numVertices = adj.size(); // Number of vertices
 
@@ -330,8 +330,8 @@ namespace ariel {
 
                         // If valid, return the negative cycle
                         std::string cycleStr = "Graph contains a negative cycle: ";
-                        for (size_t i = 0; i < cycle.size(); ++i) {
-                            cycleStr += std::to_string(cycle[i]) + "->";
+                        for (unsigned long i : cycle) {
+                            cycleStr += std::to_string(i) + "->";
                         }
                         cycleStr += std::to_string(cycle.front()); // Complete the cycle
                         return cycleStr;
