@@ -276,25 +276,81 @@ TEST_CASE("Test comparison operators") {
 
     // Test equality operator
     CHECK(g1 == g3);  // Same graphs, should be true
-    CHECK_FALSE(g1 == g2);  // Different graphs, should be false
+    CHECK(g1 == g2);  // It is true becouse the other condition that say: (!(g2 > g1) && !(g1 > g2))
 
     // Test inequality operator
-    CHECK(g1 != g2);  // Different graphs, should be true
+    CHECK_FALSE(g1 != g2);  // Becouse we get equal g1==g2. so it is false
     CHECK_FALSE(g1 != g3);  // Same graphs, should be false
 
     // Test less than operator
-    CHECK(g1 < g2);  // g2 has more edges/weight, so should be true
-    CHECK_FALSE(g2 < g1);  // g1 has fewer edges/weight, so should be false
+    CHECK_FALSE(g1 < g2);  // They the same count of edges and the same size, so it false
+    CHECK_FALSE(g2 < g1);  // They the same count of edges and the same size, so it false
 
     // Test greater than operator
-    CHECK(g2 > g1);  // g2 has more edges/weight, so should be true
-    CHECK_FALSE(g1 > g2);  // g1 has fewer edges/weight, so should be false
-
+    CHECK_FALSE(g2 > g1);  // They the same count of edges and the same size, so it false
+    CHECK_FALSE(g1 > g2);  // They the same count of edges and the same size, so it false
     // Test less than or equal to operator
-    CHECK(g1 <= g3);  // Same graphs, should be true
+    CHECK(g1 <= g3);  // Same graphs, so it true
     CHECK(g1 <= g2);  // g1 has fewer edges/weight, should be true
 
     // Test greater than or equal to operator
     CHECK(g3 >= g1);  // Same graphs, should be true
     CHECK(g2 >= g1);  // g2 has more edges/weight, should be true
 }
+TEST_CASE("Test graph multiplication by scalar") {
+    // Test case 1: Multiply a graph by a positive scalar
+    SUBCASE("Positive Scalar") {
+        ariel::Graph g1;
+        vector<vector<int>> adjacencyMatrix = {
+            {0, 1, 0},
+            {1, 0, 1},
+            {0, 1, 0}};
+        g1.loadGraph(adjacencyMatrix);
+        int scalar = 2;
+        ariel::Graph result1 = g1 *= scalar;
+        ostringstream oss1;
+        oss1 << result1;
+        CHECK(oss1.str() == "[0, 2, 0]\n[2, 0, 2]\n[0, 2, 0]\n");
+    }
+
+    // Test case 2: Multiply a graph by a negative scalar
+    SUBCASE("Negative Scalar") {
+        ariel::Graph g2;
+        vector<vector<int>> adjacencyMatrix = {
+            {0, 1, 0},
+            {1, 0, 1},
+            {0, 1, 0}};
+        g2.loadGraph(adjacencyMatrix);
+        int scalar = -2;
+        ariel::Graph result2 = g2 *= scalar;
+        std::ostringstream oss2;
+        oss2 << result2;
+        CHECK(oss2.str() == "[0, -2, 0]\n[-2, 0, -2]\n[0, -2, 0]\n" );
+    }
+
+    // Test case 3: Multiply a graph by zero
+    SUBCASE("Zero Scalar") {
+        ariel::Graph g3;
+        vector<vector<int>> adjacencyMatrix = {
+            {0, 1, 0},
+            {1, 0, 1},
+            {0, 1, 0}};
+        g3.loadGraph(adjacencyMatrix);
+        int scalar = 0;
+        ariel::Graph result3 = g3 *= scalar;
+        ostringstream oss3;
+        oss3 << result3;
+        CHECK(oss3.str() == "[0, 0, 0]\n[0, 0, 0]\n[0, 0, 0]\n");
+    }
+
+    // Test case 4: Multiply a graph by a scalar when the graph is empty
+    SUBCASE("Empty Graph") {
+        ariel::Graph g4;
+        int scalar = 5;
+        ariel::Graph result4 = g4 *= scalar;
+        ostringstream oss4;
+        oss4 << result4;
+        CHECK(oss4.str() == "");
+    }
+}
+

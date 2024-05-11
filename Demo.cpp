@@ -5,7 +5,6 @@
 
 #include "Graph.hpp"
 #include "Algorithms.hpp"
-
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -96,8 +95,8 @@ auto main() -> int
     g8.loadGraph(graph8);
     cout << "g1 == g2: " << (g1 == g2) <<endl;  // Should be false (different edges)
     cout << "g1 == g1: " << (g1 == g1) <<endl;  // Should be true 
-    cout << "g7 < g8: " << (g7 > g8) << endl;
-    cout << "g7 > g8: " << (g7 > g8) << endl;
+    cout << "g7 < g8: " << (g7 > g8) << endl;   // Should be false
+    cout << "g7 > g8: " << (g7 > g8) << endl;   // Should be false
     cout << "g7 == g8: " << (g7 == g8) <<endl;  // Should be true (!(g7 > g8) && !(g8 > g7))
     
     cout << "g1 <= g2: " << (g1 <= g2) << endl;  // Should be true (g2 has more edges)
@@ -158,4 +157,55 @@ auto main() -> int
     {
         cout << e.what() << endl; // Should print "The number of columns in the first matrix must be equal to the number of rows in the second matrix."
     }
+    
+    // *fix*Checks how the functions from Ex1 will work with the operators from Ex2
+    vector<vector<int>> graph15 = {
+        {0, 1, 0, 0},
+        {1, 0, 1, 1},
+        {0, 1, 0, 1},
+        {0, 1, 1, 0}};
+
+    vector<vector<int>> graph16 = {
+        {0, 1, 0, 1},
+        {1, 0, 1, 0},
+        {0, 0, 0, 1},
+        {1, 0, 1, 0}};
+    ariel::Graph g15, g16;
+    g15.loadGraph(graph15);
+    g16.loadGraph(graph16);
+
+    // Using operators
+    g1 += g2; // Add g2 to g1 using the += operator
+    g2 -= g1; // Subtract g1 from g2 using the -= operator
+
+    // Check if g1 is connected
+    cout << "Is g1 connected: " << ariel::Algorithms::isConnected(g1) << endl;
+    // Check if g2 is connected
+    cout << "Is g2 connected: " << ariel::Algorithms::isConnected(g2) << endl;
+
+    // Find shortest path in g1
+    string shortestPathG1 = ariel::Algorithms::shortestPath(g1, 0, 2);
+    // Check the shortest path result for g1
+    cout << "Shortest path in g1: " << shortestPathG1 << endl;
+
+    // Find shortest path in g2
+    string shortestPathG2 = ariel::Algorithms::shortestPath(g2, 0, 2);
+    // Check the shortest path result for g2
+    cout << "Shortest path in g2: " << shortestPathG2 << endl;
+
+    // Check if g1 contains a cycle
+    cout << "Does g1 contain a cycle: " << ariel::Algorithms::isContainsCycle(g1) << endl;
+    // Check if g2 contains a cycle
+    cout << "Does g2 contain a cycle: " << ariel::Algorithms::isContainsCycle(g2) << endl;
+
+    // Check if g1 is bipartite
+    cout << "Is g1 bipartite: " << ariel::Algorithms::isBipartite(g1) << endl;
+    // Check if g2 is bipartite
+    cout << "Is g2 bipartite: " << ariel::Algorithms::isBipartite(g2) << endl;
+
+    // Check if g1 contains a negative cycle
+    cout << "Does g1 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g1) << endl;
+    // Check if g2 contains a negative cycle
+    cout << "Does g2 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g2) << endl;
+
 }

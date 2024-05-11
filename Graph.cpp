@@ -182,7 +182,7 @@ namespace ariel {
         return *this;  // Return reference to this for chaining
     }
 
-    // Implements of the += operator to subtract two graphs (element-wise)
+    // Implements of the -= operator to subtract two graphs (element-wise)
     auto Graph::operator-=(const Graph& other) -> Graph& {
         if (adjMatrix.size() != other.getAdjMatrix().size() ||
             adjMatrix[0].size() != other.getAdjMatrix()[0].size()) {
@@ -215,27 +215,14 @@ namespace ariel {
         return Graph(negatedMatrix);  // Return a new graph with the negated matrix
     }
 
-    // Helper function to count edges in the adjacency matrix
-    auto countEdges(const std::vector<std::vector<int>>& matrix, bool isUndirected) -> int {
+    // Helper function to count edges in the adjacency matrix 
+    //*Note- both for directed and undirected we count 2 direction
+    auto countEdges(const std::vector<std::vector<int>>& matrix) -> int {
         int edgeCount = 0;
-        size_t size = matrix.size();
-
-        if (isUndirected) {
-            // For undirected graphs, count only unique edges
-            for (size_t i = 0; i < size; i++) {
-                for (size_t j = i + 1; j < size; j++) {
-                    if (matrix[i][j] != 0) {  // There's an edge
-                        edgeCount++;
-                    }
-                }
-            }
-        } else {
-            // For directed graphs, count all non-zero edges
-            for (const auto& row : matrix) {
-                for (int value : row) {
-                    if (value != 0) {  // If there's an edge
-                        edgeCount++;
-                    }
+        for (const auto& row : matrix) {
+            for (int value : row) {
+                if (value != 0) {  // If there's an edge
+                    edgeCount++;
                 }
             }
         }
@@ -270,8 +257,8 @@ namespace ariel {
             return false;
         } else {
             // If not fully contained in either direction, compare the number of edges
-            int edgeCount1 = countEdges(adj1, true);  // Assuming g1 is undirected
-            int edgeCount2 = countEdges(adj2, true);  // Assuming g2 is undirected
+            int edgeCount1 = countEdges(adj1);  
+            int edgeCount2 = countEdges(adj2);  
             if (edgeCount1 != edgeCount2) {
                 return edgeCount2 < edgeCount1;
             } else {
@@ -285,75 +272,47 @@ namespace ariel {
     auto operator>(const Graph& g1, const Graph& g2) -> bool {
         return g2 < g1;  // If `g2 < g1`, then `g1 > g2`
     }
-    //test
-    bool operator==(const Graph& g1, const Graph& g2) {
-    const auto& adj1 = g1.getAdjMatrix();
-    const auto& adj2 = g2.getAdjMatrix();
+    
+    // // Helper function to check if two graphs are exactly equivalent
+    bool helpFunctionToOperatorEqual(const Graph& g1, const Graph& g2) {
+        const auto& adj1 = g1.getAdjMatrix();
+        const auto& adj2 = g2.getAdjMatrix();
 
-    // Check for exact equivalence
-    if (adj1.size() != adj2.size()) {
-        return false; // Not equivalent if different numbers of vertices
-    }
-
-    for (size_t i = 0; i < adj1.size(); ++i) {
-        if (adj1[i].size() != adj2[i].size()) {
-            return false; // Not equivalent if different row sizes
+        // Check if they have the same number of vertices
+        if (adj1.size() != adj2.size()) {
+            return false;  // Different sizes mean they're not equivalent
         }
 
-        for (size_t j = 0; j < adj1[i].size(); ++j) {
-            if (adj1[i][j] != adj2[i][j]) {
-                return false; // Different edges or weights
+        // Check if they have the same elements in the adjacency matrices
+        for (size_t i = 0; i < adj1.size(); ++i) {
+            if (adj1[i].size() != adj2[i].size()) {
+                return false;  // Different row sizes mean they're not equivalent
+            }
+            for (size_t j = 0; j < adj1[i].size(); ++j) {
+                if (adj1[i][j] != adj2[i][j]) {
+                    return false;  // Different edges or weights
+                }
             }
         }
+
+        return true;  // Exact equivalence
     }
-
-    // Check for relative equivalence
-    if (!(g1 > g2) && !(g2 > g1)) {
-        return true; // Neither graph is greater than the other
-    }
-
-    return false; // If none of the conditions for equivalence are met
-}
-    // // Helper function to check if two graphs are exactly equivalent
-    // bool helpFunctionToOperatorEqual(const Graph& g1, const Graph& g2) {
-    //     const auto& adj1 = g1.getAdjMatrix();
-    //     const auto& adj2 = g2.getAdjMatrix();
-
-    //     // Check if they have the same number of vertices
-    //     if (adj1.size() != adj2.size()) {
-    //         return false;  // Different sizes mean they're not equivalent
-    //     }
-
-    //     // Check if they have the same elements in the adjacency matrices
-    //     for (size_t i = 0; i < adj1.size(); ++i) {
-    //         if (adj1[i].size() != adj2[i].size()) {
-    //             return false;  // Different row sizes mean they're not equivalent
-    //         }
-    //         for (size_t j = 0; j < adj1[i].size(); ++j) {
-    //             if (adj1[i][j] != adj2[i][j]) {
-    //                 return false;  // Different edges or weights
-    //             }
-    //         }
-    //     }
-
-    //     return true;  // Exact equivalence
-    // }
 
     // // Helper function to check if two graphs are relatively equivalent
-    // bool isRelativelyEquivalent(const Graph& g1, const Graph& g2) {
-    //     // Relative equivalence: neither graph is greater than the other
-    //     return (!(g1 > g2)) && (!(g2 > g1));
-    // }
+    bool isRelativelyEquivalent(const Graph& g1, const Graph& g2) {
+        // Relative equivalence: neither graph is greater than the other
+        return (!(g1 > g2)) && (!(g2 > g1));
+    }
 
-    // bool operator==(const Graph& g1, const Graph& g2) {
-    //     // First check exact equivalence
-    //     if (helpFunctionToOperatorEqual(g1, g2)) {
-    //         return true;  // They are equivalent
-    //     }
+    bool operator==(const Graph& g1, const Graph& g2) {
+        // First check exact equivalence
+        if (helpFunctionToOperatorEqual(g1, g2)) {
+            return true;  // They are equivalent
+        }
 
-    //     // Then check relative equivalence
-    //     return isRelativelyEquivalent(g1, g2);  // They are equivalent if neither is greater
-    // }
+        // Then check relative equivalence
+        return isRelativelyEquivalent(g1, g2);  // They are equivalent if neither is greater
+    }
 
     // Implement the <= operator for Graphs
     auto operator<=(const Graph& g1, const Graph& g2) -> bool {
