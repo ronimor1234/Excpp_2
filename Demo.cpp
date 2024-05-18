@@ -251,18 +251,18 @@ auto main() -> int
 
     cout << "Test to graph 15,16,17 isBipartite function:" << endl;
     // Check if g15 is bipartite
-    cout << "Is g15 bipartite: " << ariel::Algorithms::isBipartite(g15) << endl;
+    cout << "Is g15 bipartite: " << ariel::Algorithms::isBipartite(g15) << endl; // Should print: "0"
     // Check if g16 is bipartite
-    cout << "Is g16 bipartite: " << ariel::Algorithms::isBipartite(g16) << endl;
+    cout << "Is g16 bipartite: " << ariel::Algorithms::isBipartite(g16) << endl; // Should print: "0"
     // Check if g17 is bipartite
-    cout << "Is g17 bipartite: " << ariel::Algorithms::isBipartite(g17) << endl;
+    cout << "Is g17 bipartite: " << ariel::Algorithms::isBipartite(g17) << endl; // Should print: "The graph is bipartite: A={0,1,2}, B={3}"
     cout << "\n";
 
     cout << "Test to graph 15,16,17 negativeCycle function:" << endl;
     // Check if g15 contains a negative cycle
-    cout << "Does g15 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g15) << endl; // Should print: "0"
+    cout << "Does g15 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g15) << endl; // Should print: "Graph does not contain a negative cycle"
     // Check if g16 contains a negative cycle
-    cout << "Does g16 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g16) << endl; // Should print: "0"
+    cout << "Does g16 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g16) << endl; // Should print: "Graph contains a negative cycle: 3->2->3"
     // Check if g17 contains a negative cycle
-    cout << "Does g17 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g17) << endl; // Should print: "The graph is bipartite: A={0,1,2}, B={3}"
+    cout << "Does g17 contain a negative cycle: " << ariel::Algorithms::negativeCycle(g17) << endl; // Should print: "Graph does not contain a negative cycle"
 }

@@ -253,10 +253,9 @@ namespace ariel {
         // Check if g1 is fully contained in g2
         if (isContained(g1, g2)) {
             return true;
-        } else if (isContained(g2, g1)) {
+        } if (isContained(g2, g1)) {
             return false;
-        } else {
-            // If not fully contained in either direction, compare the number of edges
+        }             // If not fully contained in either direction, compare the number of edges
             int edgeCount1 = countEdges(adj1);  
             int edgeCount2 = countEdges(adj2);  
             if (edgeCount1 != edgeCount2) {
@@ -265,7 +264,7 @@ namespace ariel {
                 // If edge counts are equal, compare the sizes of the graphs
                 return adj2.size() < adj1.size();
             }
-        }
+       
     }
 
     // Implement the > operator for Graphs uses the operator '<'
@@ -340,14 +339,14 @@ namespace ariel {
     }
 
     // Implement the ++ operator Post-increment
-     const auto Graph::operator++(int) -> Graph {   // The int parameter indicates post-increment
+    auto Graph::operator++(int) -> Graph {   // The int parameter indicates post-increment
         Graph temp = *this;  // Save the current state
         ++(*this);  // Apply pre-increment
         return temp;  // Return the original state
     }
 
     // Implement the -- operator Pre-increment 
-     auto Graph::operator--() -> Graph& {
+    auto Graph::operator--() -> Graph& {
         for (auto& row : adjMatrix) {
             for (auto& value : row) {
                 value--;  // Subtract one from each edge
@@ -357,7 +356,7 @@ namespace ariel {
     }
 
     // Implement the -- operator Post-increment
-    const auto Graph::operator--(int) -> Graph {  // The int parameter indicates post-decrement
+    auto Graph::operator--(int) -> Graph {  // The int parameter indicates post-decrement
         Graph temp = *this;  // Save the current state
         --(*this);  // Apply pre-decrement
         return temp;  // Return the original state

@@ -36,7 +36,11 @@ namespace ariel {
         // Get the adjacency matrix
         const std::vector<std::vector<int>>& getAdjMatrix() const;
 
-        //from here it Ex2
+        //From here it Ex2
+        /*
+        *Note: i used friend functions when the operator needs to access the internal state of both operands or when the left operand is not an instance of the class.
+        * and used members functions when the operator modifies the state of the calling object or when only a single object is involved.
+        */
         // Friend function declaration for the << operator, this function is friend to allow the function to access the private and protected members of the Graph class.
         friend std::ostream& operator<<(std::ostream& os, const Graph& graph);
 
