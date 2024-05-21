@@ -1,5 +1,6 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "Graph.hpp"
+#include <algorithm>
 #include <iostream> // For std::cout
 #include <stdexcept>  // For std::invalid_argument
 
@@ -204,33 +205,23 @@ namespace ariel {
 
     // Implements of the unary - operator: negates all elements in the adjacency matrix
     auto Graph::operator-() const -> Graph {
-        std::vector<std::vector<int>> negatedMatrix(adjMatrix.size(), std::vector<int>(adjMatrix[0].size()));
-        
-        for (size_t i = 0; i < adjMatrix.size(); ++i) {
-            for (size_t j = 0; j < adjMatrix[0].size(); ++j) {
-                negatedMatrix[i][j] = -adjMatrix[i][j];  // Negate the element
-            }
-        }
-
-        return Graph(negatedMatrix);  // Return a new graph with the negated matrix
+        Graph negatedGraph = *this;  // Create a copy of the current graph
+        negatedGraph *= -1;          // Use the *= operator to negate all elements
+        return negatedGraph;         // Return the negated graph
     }
 
-    // Helper function to count edges in the adjacency matrix 
+    // Helper functions(countEdges, isContained) to operator < 
     //*Note- both for directed and undirected we count 2 direction
-    auto countEdges(const std::vector<std::vector<int>>& matrix) -> int {
-        int edgeCount = 0;
-        for (const auto& row : matrix) {
-            for (int value : row) {
-                if (value != 0) {  // If there's an edge
-                    edgeCount++;
-                }
-            }
+    int Graph::countEdges(const std::vector<std::vector<int>>& adjMatrix) const {
+        int count = 0;
+        for (const auto& row : adjMatrix) {
+            count += std::count(row.begin(), row.end(), 1); // Assuming 1 represents an edge
         }
-        return edgeCount;
+        return count;
     }
 
     // Check if one graph contains another
-    auto isContained(const Graph& g1, const Graph& g2) -> bool {
+    bool Graph::isContained(const Graph& g1, const Graph& g2) const {
         const auto& adj1 = g1.getAdjMatrix();
         const auto& adj2 = g2.getAdjMatrix();
 
@@ -246,36 +237,39 @@ namespace ariel {
     }
 
     // Implement the < operator for Graphs
-    bool operator<(const Graph& g1, const Graph& g2) {
-        const auto& adj1 = g1.getAdjMatrix();
-        const auto& adj2 = g2.getAdjMatrix();
+    bool Graph::operator<(const Graph& other) const {
+        const auto& adj1 = this->getAdjMatrix();
+        const auto& adj2 = other.getAdjMatrix();
 
-        // Check if g1 is fully contained in g2
-        if (isContained(g1, g2)) {
+        // Check if *this is fully contained in other
+        if (isContained(*this, other)) {
             return true;
-        } if (isContained(g2, g1)) {
+        }
+        if (isContained(other, *this)) {
             return false;
-        }             // If not fully contained in either direction, compare the number of edges
-            int edgeCount1 = countEdges(adj1);  
-            int edgeCount2 = countEdges(adj2);  
-            if (edgeCount1 != edgeCount2) {
-                return edgeCount2 < edgeCount1;
-            } else {
-                // If edge counts are equal, compare the sizes of the graphs
-                return adj2.size() < adj1.size();
-            }
-       
+        }
+
+        // If not fully contained in either direction, compare the number of edges
+        int edgeCount1 = countEdges(adj1);
+        int edgeCount2 = countEdges(adj2);
+
+        if (edgeCount1 != edgeCount2) {
+            return edgeCount1 < edgeCount2;
+        } else {
+            // If edge counts are equal, compare the sizes of the graphs
+            return adj1.size() < adj2.size();
+        }
     }
 
     // Implement the > operator for Graphs uses the operator '<'
-    auto operator>(const Graph& g1, const Graph& g2) -> bool {
-        return g2 < g1;  // If `g2 < g1`, then `g1 > g2`
+    bool Graph::operator>(const Graph& other) const {
+        return other < *this;  // If `other < this`, then `this > other`
     }
     
-    // // Helper function to check if two graphs are exactly equivalent
-    bool helpFunctionToOperatorEqual(const Graph& g1, const Graph& g2) {
-        const auto& adj1 = g1.getAdjMatrix();
-        const auto& adj2 = g2.getAdjMatrix();
+    // Helper function to check if two graphs are exactly equivalent
+    bool Graph::helpFunctionToOperatorEqual(const Graph& other) const {
+        const auto& adj1 = this->getAdjMatrix();
+        const auto& adj2 = other.getAdjMatrix();
 
         // Check if they have the same number of vertices
         if (adj1.size() != adj2.size()) {
@@ -297,35 +291,35 @@ namespace ariel {
         return true;  // Exact equivalence
     }
 
-    // // Helper function to check if two graphs are relatively equivalent
-    bool isRelativelyEquivalent(const Graph& g1, const Graph& g2) {
-        // Relative equivalence: neither graph is greater than the other
-        return (!(g1 > g2)) && (!(g2 > g1));
+    // Helper function to check if two graphs are relatively equivalent
+    bool Graph::isRelativelyEquivalent(const Graph& other) const {
+        return !(this->operator>(other)) && !(other.operator>(*this));
     }
 
-    bool operator==(const Graph& g1, const Graph& g2) {
+    // implement the == operator for graphs.
+    bool Graph::operator==(const Graph& other) const {
         // First check exact equivalence
-        if (helpFunctionToOperatorEqual(g1, g2)) {
+        if (helpFunctionToOperatorEqual(other)) {
             return true;  // They are equivalent
         }
 
         // Then check relative equivalence
-        return isRelativelyEquivalent(g1, g2);  // They are equivalent if neither is greater
+        return isRelativelyEquivalent(other);  // They are equivalent if neither is greater
     }
 
-    // Implement the <= operator for Graphs
-    auto operator<=(const Graph& g1, const Graph& g2) -> bool {
-        return (g1 < g2) || (g1 == g2);  // True if `g1` is less than or equal to `g2`
+    // Implement the <= operator for graphs
+    bool Graph::operator<=(const Graph& other) const {
+        return (other < *this || *this == other);
     }
 
     // Implement the >= operator for Graphs
-    auto operator>=(const Graph& g1, const Graph& g2) -> bool {
-        return (g1 > g2) || (g1 == g2);  // True if `g1` is greater than or equal to `g2`
+    bool Graph::operator>=(const Graph& other) const {
+        return (*this < other || *this == other);
     }
 
     // Implement the != operator for Graphs
-    auto operator!=(const Graph& g1, const Graph& g2) -> bool {
-        return !(g1 == g2);  // If they are not equal, return true
+    bool Graph::operator!=(const Graph& other) const {
+        return !(*this == other);
     }
 
     // Implement the ++ operator Pre-increment 

@@ -68,23 +68,35 @@ namespace ariel {
         // Declare the unary minus operator, in this case it is const to ensure that it can be called on const instances of Graph.
         Graph operator-() const; 
 
-        // Declaration for the `<` operator (bigger then),this function is friend to allow the function to access the private and protected members of the Graph class. 
-        friend bool operator<(const Graph& g1, const Graph& g2);  
+        // Helper functions(countEdges, isContained) to count edges in the adjacency matrix to operator <
+        bool isContained(const Graph& g1, const Graph& g2) const;
 
-        // Declaration for the `>` operator (smaller then),this function is friend to allow the function to access the private and protected members of the Graph class.
-        friend bool operator>(const Graph& g1, const Graph& g2);  
+        int countEdges(const std::vector<std::vector<int>>& adjMatrix) const;
+        
+        // Declaration for the `<` operator (bigger then)   
+        bool operator<(const Graph& other) const;
 
-        // Declaration for `==` operator **note- i decided to add this operator, this function is friend to allow the function to access the private and protected members of the Graph class.
-        friend bool operator==(const Graph& g1, const Graph& g2);
+        // Declaration for the `>` operator (smaller then)
+        bool operator>(const Graph& other) const;  
 
-        // Declaration for '<=' operator less than or equal to, this function is friend to allow the function to access the private and protected members of the Graph class.
-        friend bool operator<=(const Graph& g1, const Graph& g2);
+        // **Helper functions(countEhelpFunctionToOperatorEqualdges, isContained) to operator ==
+        // Helper function to check exact equivalence
+        bool helpFunctionToOperatorEqual(const Graph& other) const;
 
-        // Declaration for '>=' operator greater than or equal, this function is friend to allow the function to access the private and protected members of the Graph class. 
-        friend bool operator>=(const Graph& g1, const Graph& g2);  
+        // Helper function to check relative equivalence.
+        bool isRelativelyEquivalent(const Graph& other) const;
 
-        // Declaration for '!=' operator inequality, this function is friend to allow the function to access the private and protected members of the Graph class.
-        friend bool operator!=(const Graph& g1, const Graph& g2);
+        // Declaration for `==` operator **note- i decided to add this operator.
+        bool operator==(const Graph& other) const;
+
+        // Declaration for '<=' operator less than or equal to.
+        bool operator<=(const Graph& other) const;
+
+        // Declaration for '>=' operator greater than or equal.
+        bool operator>=(const Graph& other) const;
+
+        // Declaration for '!=' operator inequality.
+        bool operator!=(const Graph& other) const;
 
         // Declaration for '++' operator Pre-increment, this operator return a reference to the modified object itself.
         Graph& operator++();
